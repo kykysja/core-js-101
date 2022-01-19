@@ -114,6 +114,15 @@ class CssSelectorBuilder {
     this.previousSelector = '';
     this.selectors = [];
     this.order = -1;
+
+    this.errorMessage1 = 'Element, id and pseudo-element should ';
+    this.errorMessage2 = 'not occur more then one time inside the selector';
+    this.errorMessage = this.errorMessage1 + this.errorMessage2;
+
+    this.errMess1 = 'Selector parts should be arranged in the ';
+    this.errMess2 = 'following order: element, id, class, ';
+    this.errMess3 = 'attribute, pseudo-class, pseudo-element';
+    this.errMess = this.errMess1 + this.errMess2 + this.errMess3;
   }
 
   stringify() {
@@ -127,15 +136,12 @@ class CssSelectorBuilder {
 
   element(value) {
     if (this.previousSelector === 'element') {
-      throw new Error(
-        'Element, id and pseudo-element should not occur more then one time inside the selector'
-      );
+      throw new Error(this.errorMessage);
     }
     if (this.order > 0) {
-      throw new Error(
-        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
-      );
+      throw new Error(this.errMess);
     }
+
     this.previousSelector = 'element';
     this.selectors.push(value);
     this.order = 0;
@@ -144,14 +150,10 @@ class CssSelectorBuilder {
 
   id(value) {
     if (this.previousSelector === 'id') {
-      throw new Error(
-        'Element, id and pseudo-element should not occur more then one time inside the selector'
-      );
+      throw new Error(this.errorMessage);
     }
     if (this.order > 1) {
-      throw new Error(
-        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
-      );
+      throw new Error(this.errMess);
     }
     this.previousSelector = 'id';
     this.selectors.push(`#${value}`);
@@ -161,9 +163,7 @@ class CssSelectorBuilder {
 
   class(value) {
     if (this.order > 2) {
-      throw new Error(
-        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
-      );
+      throw new Error(this.errMess);
     }
     this.previousSelector = '';
     this.selectors.push(`.${value}`);
@@ -173,9 +173,7 @@ class CssSelectorBuilder {
 
   attr(value) {
     if (this.order > 3) {
-      throw new Error(
-        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
-      );
+      throw new Error(this.errMess);
     }
     this.previousSelector = '';
     this.selectors.push(`[${value}]`);
@@ -185,9 +183,7 @@ class CssSelectorBuilder {
 
   pseudoClass(value) {
     if (this.order > 4) {
-      throw new Error(
-        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
-      );
+      throw new Error(this.errMess);
     }
     this.previousSelector = 'null';
     this.selectors.push(`:${value}`);
@@ -197,9 +193,7 @@ class CssSelectorBuilder {
 
   pseudoElement(value) {
     if (this.previousSelector === 'pseudoElement') {
-      throw new Error(
-        'Element, id and pseudo-element should not occur more then one time inside the selector'
-      );
+      throw new Error(this.errorMessage);
     }
     this.previousSelector = 'pseudoElement';
     this.selectors.push(`::${value}`);

@@ -123,10 +123,9 @@ function isTriangle(a, b, c) {
  *
  */
 function doRectanglesOverlap(rect1, rect2) {
-  return (
-    rect2.top - rect1.top < rect1.width &&
-    rect2.left - rect1.left < rect1.height
-  );
+  const isXOverlap = rect2.top - rect1.top < rect1.width;
+  const isYOverlap = rect2.left - rect1.left < rect1.height;
+  return isXOverlap && isYOverlap;
 }
 
 /**

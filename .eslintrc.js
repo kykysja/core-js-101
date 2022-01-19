@@ -13,8 +13,5 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 2018,
   },
-  rules: {
-    'comma-dangle': ['off'],
-    'operator-linebreak': [0],
-  },
+  rules: {},
 };
