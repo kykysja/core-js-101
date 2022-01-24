@@ -154,14 +154,12 @@ function doRectanglesOverlap(rect1, rect2) {
  *   { center: { x:0, y:0 }, radius:10 },  { x:10, y:10 }   => false
  *
  */
-function isInsideCircle(/* circle, point */) {
-  /* return (
-    point.x > circle.center.x - circle.radius &&
-    point.x < circle.center.x + circle.radius &&
-    point.y > circle.center.y - circle.radius &&
-    point.y < circle.center.y + circle.radius
-  ); */
-  throw new Error('Not implemented');
+function isInsideCircle(circle, point) {
+  const centerX = circle.center.x;
+  const centerY = circle.center.y;
+  const { radius } = circle;
+
+  return (point.x - centerX) ** 2 + (point.y - centerY) ** 2 < radius ** 2;
 }
 
 /**
@@ -204,8 +202,13 @@ function findFirstSingleChar(str) {
  *   5, 3, true, true   => '[3, 5]'
  *
  */
-function getIntervalString(/* a, b, isStartIncluded, isEndIncluded */) {
-  throw new Error('Not implemented');
+function getIntervalString(a, b, isStartIncluded, isEndIncluded) {
+  const first = a < b ? a : b;
+  const second = a > b ? a : b;
+
+  return `${isStartIncluded ? '[' : '('}${first}, ${second}${
+    isEndIncluded ? ']' : ')'
+  }`;
 }
 
 /**
@@ -261,24 +264,6 @@ function reverseInteger(num) {
  *   4916123456789012 => false
  */
 function isCreditCardNumber(/* ccn */) {
-  /* const value = ccn.replace(/\D/g, '');
-
-  let nCheck = 0;
-  let bEven = false;
-
-  for (let n = value.length - 1; n >= 0; n -= 1) {
-    let nDigit = parseInt(value.charAt(n), 10);
-
-    // nDigit = bEven && (nDigit *= 2) > 9 ? (nDigit -= 9) : nDigit;
-    if (bEven && (nDigit *= 2) > 9) {
-      nDigit -= 9;
-    }
-
-    nCheck += nDigit;
-    bEven = !bEven;
-  }
-
-  return nCheck % 10 === 0; */
   throw new Error('Not implemented');
 }
 
@@ -326,8 +311,30 @@ function getDigitalRoot(num) {
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  throw new Error('Not implemented');
+function isBracketsBalanced(str) {
+  if (str.length % 2 !== 0) return false;
+
+  const map = {
+    ')': '(',
+    '}': '{',
+    ']': '[',
+    '>': '<',
+  };
+  const arr = [];
+
+  for (let i = 0; i < str.length; i += 1) {
+    if (Object.keys(map).includes(str[0])) {
+      return false;
+    }
+    if (Object.values(map).includes(str[i])) {
+      arr.push(str[i]);
+    } else if (Object.keys(map).includes(str[i])) {
+      if (arr[arr.length - 1] === map[str[i]]) {
+        arr.pop();
+      }
+    }
+  }
+  return !arr.length;
 }
 
 /**
@@ -350,8 +357,23 @@ function isBracketsBalanced(/* str */) {
  *    365, 4  => '11231'
  *    365, 10 => '365'
  */
-function toNaryString(/* num, n */) {
-  throw new Error('Not implemented');
+function toNaryString(num, n) {
+  function reVal(number) {
+    if (number >= 0 && number <= 9) {
+      return String.fromCharCode(number + 48);
+    }
+    return String.fromCharCode(number - 10 + 65);
+  }
+
+  let str = '';
+  let number = num;
+
+  while (number > 0) {
+    str += reVal(number % n);
+    number = parseInt(number / n, 10);
+  }
+
+  return str.split('').reverse().join('');
 }
 
 /**
@@ -388,8 +410,27 @@ function getCommonDirectoryPath(/* pathes */) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  throw new Error('Not implemented');
+function getMatrixProduct(m1, m2) {
+  const rows = new Array(m2[0].length).fill(null);
+  const matrix = new Array(m1.length).fill(rows);
+
+  function fillRow(el, idx, rowIdx) {
+    const row = m1[rowIdx];
+    const column = [];
+
+    for (let i = 0; i < m1[0].length; i += 1) {
+      column.push(m2[i][idx]);
+    }
+
+    return row.reduce((prev, cur, index) => prev + cur * column[index], 0);
+  }
+
+  const result = matrix.map((row, rowIdx) => {
+    const elems = row.map((el, idx) => fillRow(el, idx, rowIdx));
+    return elems;
+  });
+
+  return result;
 }
 
 /**
@@ -422,8 +463,25 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+function evaluateTicTacToePosition(position) {
+  const BOARD_LENGTH = 3;
+  const isEqual = (a, b, c) => a && a === b && a === c;
+
+  for (let i = 0; i < BOARD_LENGTH; i += 1) {
+    if (isEqual(position[0][i], position[1][i], position[2][i])) {
+      return position[0][i];
+    }
+    if (isEqual(position[i][0], position[i][1], position[i][2])) {
+      return position[i][0];
+    }
+    if (isEqual(position[0][0], position[1][1], position[2][2])) {
+      return position[0][0];
+    }
+    if (isEqual(position[0][2], position[1][1], position[2][0])) {
+      return position[0][2];
+    }
+  }
+  return undefined;
 }
 
 module.exports = {

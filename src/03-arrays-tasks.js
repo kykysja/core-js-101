@@ -193,8 +193,11 @@ function getTail(arr, n) {
  *    +'20,21,22,23,24\n'
  *    +'30,31,32,33,34'
  */
-function toCsvText(/* arr */) {
-  throw new Error('Not implemented');
+function toCsvText(arr) {
+  const rows = arr.map((el) => el.join(','));
+  const str = rows.join('\n');
+
+  return str;
 }
 
 /**
@@ -259,11 +262,13 @@ function getSecondItems(arr) {
  *  [ 'a', 'b', 'c', null ] => [ 'a', 'b','b', 'c','c','c',  null,null,null,null ]
  *  [ 1,2,3,4,5 ] => [ 1, 2,2, 3,3,3, 4,4,4,4, 5,5,5,5,5 ]
  */
-function propagateItemsByPositionIndex(/* arr */) {
-  throw new Error('Not implemented');
-  /* const resultArr = [];
+function propagateItemsByPositionIndex(arr) {
+  if (arr.length === 0 || arr.length === 1) return arr;
 
-  arr.map((el, index) => el ** ); */
+  return arr.reduce((prev, current, idx) => {
+    prev.push(...Array(idx + 1).fill(current));
+    return prev;
+  }, []);
 }
 
 /**
@@ -318,8 +323,21 @@ function getPositivesCount(arr) {
  *   [ 'nine','eight','nine','eight'] => [ 'eight','eight','nine','nine']
  *   [ 'one','one','one','zero' ]     => [ 'zero','one','one','one' ]
  */
-function sortDigitNamesByNumericOrder(/* arr */) {
-  throw new Error('Not implemented');
+function sortDigitNamesByNumericOrder(arr) {
+  const map = {
+    zero: 0,
+    one: 1,
+    two: 2,
+    three: 3,
+    four: 4,
+    five: 5,
+    six: 6,
+    seven: 7,
+    eight: 8,
+    nine: 9,
+  };
+
+  return arr.sort((a, b) => map[a] - map[b]);
 }
 
 /**
@@ -524,8 +542,19 @@ function distinct(arr) {
  *    "Poland" => ["Lodz"]
  *   }
  */
-function group(/* array, keySelector, valueSelector */) {
-  throw new Error('Not implemented');
+function group(array, keySelector, valueSelector) {
+  const keys = Array.from(new Set(array.map((el) => keySelector(el))));
+  const map = new Map();
+
+  const result = keys.reduce((prev, key) => {
+    const filtered = array.filter((el) => keySelector(el) === key);
+    const values = filtered.map((el) => valueSelector(el));
+
+    map.set(key, values);
+    return map;
+  }, map);
+
+  return result;
 }
 
 /**
